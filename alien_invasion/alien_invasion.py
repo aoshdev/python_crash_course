@@ -3,6 +3,7 @@ import pygame
 
 from alien_invasion.settings import Settings
 from alien_invasion.ship import Ship
+from alien_invasion.bullet import Bullet
 
 class AlienInvasion:
     """Overall class to manage game assets and behavior"""
@@ -26,6 +27,7 @@ class AlienInvasion:
         # self here refers to current instance of AlienInvasion
         # this gives Ship access to resources e.g. screen
         self.ship = Ship(self) 
+        self.bullets = pygame.sprite.Group() 
 
 
     # this method will control the game
@@ -34,6 +36,8 @@ class AlienInvasion:
         while True:
             self._check_events() # refactored here to simplify
             self.ship.update() # position updated after checking key press
+            self.bullets.update() # update position of bullet
+            self._update_bullets()            
             self._update_screen() # Redraw screen
 
             # Make most recently drawn screen visible
@@ -61,6 +65,8 @@ class AlienInvasion:
             self.ship.moving_left = True
         elif event.key == pygame.K_q: #q key
             sys.exit()
+        elif event.key == pygame.K_SPACE:
+            self._fire_bullet()
     
     def _check_keyup_events(self,event):
         """Respond to key releases"""
@@ -69,10 +75,28 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
 
+    def _fire_bullet(self):
+        """Create new bullet and add to bullets group"""
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self) #create instance of Bullet
+            self.bullets.add(new_bullet) #add to group of bullets
+
+    def _update_bullets(self):
+        # get rid of bullets that disappear
+        # can't remove from a list you're looping so loop a copy instead
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
+        # print(len(self.bullets)) # use to check bullets is being deleted
+        
     def _update_screen(self):
         """Update images on screen"""
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme() # draw ship on top of background
+
+        # bullets.sprites() returns a list of all sprites in bullets group
+        for bullet in self.bullets.sprites():
+            bullet.draw_bullet()
 
 if __name__ == '__main__': # only runs if this file is called directly
     # make game instance and run the game
