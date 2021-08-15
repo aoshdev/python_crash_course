@@ -3,13 +3,13 @@ from time import sleep
 
 import pygame
 
-from alien_invasion.settings import Settings
-from alien_invasion.game_stats import GameStats
-from alien_invasion.ship import Ship
-from alien_invasion.bullet import Bullet
-from alien_invasion.alien import Alien
-from alien_invasion.button import Button
-from alien_invasion.scoreboard import Scoreboard
+from settings import Settings
+from game_stats import GameStats
+from ship import Ship
+from bullet import Bullet
+from alien import Alien
+from button import Button
+from scoreboard import Scoreboard
 
 class AlienInvasion:
     """Overall class to manage game assets and behavior"""
@@ -281,4 +281,5 @@ if __name__ == '__main__': # only runs if this file is called directly
     # make game instance and run the game
     ai = AlienInvasion()
     ai.run_game()
+
 
